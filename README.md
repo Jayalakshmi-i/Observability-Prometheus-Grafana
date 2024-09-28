@@ -41,7 +41,7 @@ Prometheus is an open-source monitoring and alerting system that helps you colle
 
 <br></br>
 
-## Why Prometheus over other monitoring tools ?
+## Why Prometheus over other monitoring tools?
 
 Prometheus is a popular choice for Kubernetes monitoring for several reasons:
 
@@ -64,7 +64,7 @@ Prometheus is a popular choice for Kubernetes monitoring for several reasons:
 
 <br></br>
 
-## What is Grafana ?
+## What is Grafana?
 
 Grafana is a popular open-source data visualization and analytics platform that allows you to create custom dashboards and visualizations based on a variety of data sources. Grafana is often used for monitoring and analyzing metrics and logs in real-time, making it an ideal tool for monitoring systems and applications, including Kubernetes environments.
 
