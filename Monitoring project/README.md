@@ -28,17 +28,16 @@ Created a security group with the following ports open:
      
 ### Steps for Downloading, Extracting, and Starting Prometheus, Node Exporter, Blackbox Exporter, and Alertmanager
 
-#### VM-1 (Node Exporter)
-1. **Download Node Exporter**
-   ```bash
-   sudo apt update
-   wget https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz
-   tar xvfz node_exporter-1.8.1.linux-amd64.tar.gz
-   cd node_exporter-1.8.1.linux-amd64
-   ./node_exporter &
-   ```
+## VM-1 (Node Exporter)
+```bash
+sudo apt update
+wget https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz
+tar xvfz node_exporter-1.8.1.linux-amd64.tar.gz
+cd node_exporter-1.8.1.linux-amd64
+./node_exporter &
+```
 
-#### In Virtual machine-2 install Prometheus, Alert Manager, Blackbox Exporter
+## In Virtual machine-2 install Prometheus, Alert Manager, Blackbox Exporter
 
 ##### Prometheus
    ```bash
@@ -90,8 +89,10 @@ java -jar database_service_project-0.0.4.jar
 ![image](https://github.com/user-attachments/assets/8843549d-378e-4e92-85b6-da889b1ad1ee)
 
 Now, we will access the game application at: http://3.135.20.106:8080/
+
 ![image](https://github.com/user-attachments/assets/f29bcf19-de7e-4176-8822-29ec58fbb3c4)
 
+--- 
 Next, go to VM-2 to configure the Prometheus server by defining alert-rules for the different scenarios. and based on these rules we will get the alerts
 ```
 cd Prometheus
@@ -99,6 +100,7 @@ cd Prometheus
 ```
 
 Can access the Prometheus server at: http://3.145.128.69:9090/graph  
+
 ![image](https://github.com/user-attachments/assets/085904e1-0f2e-4721-96a2-b097ec51f639)
 
 For now, we can’t see any alert rules so let’s create a new alert_rules.yaml file to configure alert rules in the Prometheus server
@@ -211,7 +213,7 @@ kill id
 
 Now we need to connect both the `Alert manager` and `VM-1 node exporter` to the Prometheus server by updating the **prometheus.yml** file
 
-#### Node Exporter
+## Node Exporter
 ```yaml
   - job_name: "node_exporter"         # Job name for node exporter
 
@@ -223,15 +225,19 @@ Now we need to connect both the `Alert manager` and `VM-1 node exporter` to the 
 ```
  ![image](https://github.com/user-attachments/assets/06bc4faf-8353-4df4-8fbd-cd93d3132ee0)
 
-
 After **restarting** the Prometheus server, we should be able to see the node exporter on the Prometheus target section
 
 ![image](https://github.com/user-attachments/assets/c7c9b77c-951c-4aa9-9c7c-91b3009afc12)
 
 Next, need to configure the `Blackbox exporter` to scrape the data from the website application, so let’s update the scrapping configs on the prometheus.yml file
-### Prometheus Configuration (`prometheus.yml`)
+
+## Blackbox Exporter
+
+#### Prometheus Configuration (`prometheus.yml`)
 
 #### Blackbox Exporter
+Adding scrape configs data of game application to the prometheus.yml file
+
 ```yaml
   - job_name: 'blackbox'              # Job name for blackbox exporter
     metrics_path: /probe              # Path for blackbox probe
@@ -255,9 +261,11 @@ Next, need to configure the `Blackbox exporter` to scrape the data from the webs
 ![image](https://github.com/user-attachments/assets/a40bfce9-459b-4bd9-af22-8cd196fc85c8)
 
 Need to start the Blackbox exporter
+
 ![image](https://github.com/user-attachments/assets/ba52c740-50e5-4f8b-b0ab-8ea03e4b3a8b)
 
 When we start **Alert Manager**, we won’t be able to see any alerts as of now since we haven’t configured Alert Manager 
+
 ![image](https://github.com/user-attachments/assets/00770d5d-13b0-4fc0-a5fa-11e4b9bb3134)
 
 So, let’s configure it!!
@@ -266,7 +274,8 @@ Now we need to configure email notifications to get emails when the defined cond
 
 To receive email notifications, we need to enable 2 step verifications on the Gmail account
 
-In order to configure the email notifications, go to https://myaccount.google.com/apppasswords and then **Enter name** and get **an app password** which can be used for routing configuration
+To configure the email notifications, go to https://myaccount.google.com/apppasswords and then **Enter name** and get **an app password** which can be used for routing configuration
+
 ```
 cd alertmanager
 vi alertmanager.yml
@@ -306,7 +315,8 @@ inhibit_rules:
 
 Now, ``Restart`` the alert manager and check
 
-Hurray, the monitoring setup is complete!!!! 
+**Hurray, the monitoring setup is complete!!!!**
+
 ![image](https://github.com/user-attachments/assets/527baa2d-8956-4014-a6a8-d6a998448108)
 
 To check the functionality let's try shutting down the game application.
@@ -318,9 +328,11 @@ To check the functionality let's try shutting down the game application.
 Currently, the status is in a pending state
 
 After `1 minute` the status will change to firing state and soon will receive an email notification
+
 ![image](https://github.com/user-attachments/assets/931cd4b7-3311-46a0-9616-658c1964d268)
 
 At this point, we can see the notification on the Alert manager
+
 ![image](https://github.com/user-attachments/assets/c82f7b84-ebfd-4d43-947d-18f58098d4bb)
 
 ### Notes:
