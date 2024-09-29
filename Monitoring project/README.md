@@ -1,5 +1,7 @@
 # Ultimate DevOps Monitoring and Alerting Project: Ensuring Uptime and Reliability 
 
+In this project, I implemented a robust monitoring solution using Prometheus to ensure the reliability and performance of our infrastructure. The main objective was to set up real-time monitoring for a website and an EC2 instance, allowing us to address threats quickly and maintain optimal performance.
+
 <img width="900" alt="Screenshot 2024-09-29 at 9 38 09 PM" src="https://github.com/user-attachments/assets/628e0bc4-b167-4f49-8a7d-607cb7554d76">
 
 YouTube Video URL of the project ->  [https://www.youtube.com/watch?v=JGQI5pkK82w](https://www.youtube.com/watch?v=0Ec_VeO60m8)
