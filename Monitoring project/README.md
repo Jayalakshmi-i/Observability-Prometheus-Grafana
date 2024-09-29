@@ -1,10 +1,17 @@
 # Ultimate DevOps Monitoring and Alerting Project: Ensuring Uptime and Reliability 
 
-YouTube Video URL of the project ->  https://www.youtube.com/watch?v=JGQI5pkK82w
+YouTube Video URL of the project ->  [https://www.youtube.com/watch?v=JGQI5pkK82w](https://www.youtube.com/watch?v=0Ec_VeO60m8)
 
 <img width="900" alt="Screenshot 2024-09-29 at 9 38 09 PM" src="https://github.com/user-attachments/assets/aea0bede-3372-48b7-bc6b-17799f1e8277">
 
 Here are the step-by-step details to set up an Ultimate DevOps Monitoring project using Prometheus and Alert Manager:
+
+### Components:
+   - **Prometheus:** It is an open-source tool for monitoring and alerting applications. It uses the concept of scrapping when target systems metric points are contacted to fetch data at regular intervals.
+   - **Node exporter:** It is a monitoring agent that is installed on all target machines so that Prometheus can fetch the data from all the metrics endpoints.
+   - **Blackbox exporter:** It is used to get information from the website like traffic is coming from the website or not
+   - **Alert manager:** The Alert manager handles alerts sent by client applications such as the Prometheus server. Used to set alert based on conditions so we will be notified ex if the website is down for continuous 1- 5 minutes, service unavailability
+
 
 #### Pre-requisites to start:
 Created a security group with the following ports open: 
@@ -58,12 +65,6 @@ Created a security group with the following ports open:
    cd blackbox_exporter-0.25.0.linux-amd64
    ./blackbox_exporter &
    ```
-
-### Notes:
-- The `&` at the end of each command ensures the process runs in the background.
-- Ensure that you have configured the `prometheus.yml` and `alertmanager.yml` configuration files correctly before starting the services.
-- Adjust the firewall and security settings to allow the necessary ports (typically 9090 for Prometheus, 9093 for Alertmanager, 9115 for Blackbox Exporter, and 9100 for Node Exporter) to be accessible.
-
 ---
 Once the VM-1 node exporter is up and running we can see the below webpage
 
@@ -101,6 +102,7 @@ Can access the Prometheus server at: http://3.145.128.69:9090/graph
 ![image](https://github.com/user-attachments/assets/085904e1-0f2e-4721-96a2-b097ec51f639)
 
 For now, we can’t see any alert rules so let’s create a new alert_rules.yaml file to configure alert rules in the Prometheus server
+
 ## Alert Rules Configuration (`alert_rules.yml`)
 
 ### Alert Rules Group
@@ -184,6 +186,15 @@ groups:
 Now we need to input the above rules file to the Prometheus server by updating the prometheus.yml file
 
 ## Prometheus Configuration (`prometheus.yml`)
+
+### Global Configuration
+```yaml
+global:
+  scrape_interval: 15s                # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s            # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+```
+
 ### Rule Files
 ```yaml
 rule_files:
@@ -198,16 +209,26 @@ kill id
 ```
 ![image](https://github.com/user-attachments/assets/229a1dcb-1c8a-438b-a921-6c35e0a9c3c0)
 
-Now we need to connect both the Alert manager and VM-1 node exporter to Prometheus server by updating the prometheus.yml file
+Now we need to connect both the `Alert manager` and `VM-1 node exporter` to the Prometheus server by updating the **prometheus.yml** file
 
+#### Node Exporter
+```yaml
+  - job_name: "node_exporter"         # Job name for node exporter
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ["3.135.20.106:9100"]  # Target node exporter endpoint
+```
  ![image](https://github.com/user-attachments/assets/06bc4faf-8353-4df4-8fbd-cd93d3132ee0)
 
 
-After restarting the Prometheus server, we should be able to see the node exporter on Prometheus target section
+After **restarting** the Prometheus server, we should be able to see the node exporter on the Prometheus target section
 
 ![image](https://github.com/user-attachments/assets/c7c9b77c-951c-4aa9-9c7c-91b3009afc12)
 
-Next, need to configure the Blackbox exporter to scrape the data from the website application, so let’s update the scrapping configs on the prometheus.yml file
+Next, need to configure the `Blackbox exporter` to scrape the data from the website application, so let’s update the scrapping configs on the prometheus.yml file
 ### Prometheus Configuration (`prometheus.yml`)
 
 #### Blackbox Exporter
@@ -220,14 +241,14 @@ Next, need to configure the Blackbox exporter to scrape the data from the websit
       - targets:
         - http://prometheus.io        # HTTP target
         - https://prometheus.io       # HTTPS target
-        - http://3.110.195.114:8080/  # HTTP target with port 8080
+        - http://3.135.20.106:8080/  # HTTP target with port 8080
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: 13.235.248.225:9115  # Blackbox exporter address
+        replacement: 3.145.128.69:9115  # Blackbox exporter address
 ```
 `Restart` the Prometheus server to reflect the changes
 
@@ -236,18 +257,16 @@ Next, need to configure the Blackbox exporter to scrape the data from the websit
 Need to start the Blackbox exporter
 ![image](https://github.com/user-attachments/assets/ba52c740-50e5-4f8b-b0ab-8ea03e4b3a8b)
 
-When we start Alert Manager, we won’t be able to see any alerts as of now since we haven’t configured Alert Manager 
+When we start **Alert Manager**, we won’t be able to see any alerts as of now since we haven’t configured Alert Manager 
 ![image](https://github.com/user-attachments/assets/00770d5d-13b0-4fc0-a5fa-11e4b9bb3134)
 
- 
+So, let’s configure it!!
 
-So, let’s configure it
 Now we need to configure email notifications to get emails when the defined conditions are met
 
 To receive email notifications, we need to enable 2 step verifications on the Gmail account
 
-To configure email notifications, go to https://myaccount.google.com/apppasswords
-Enter name and get an app password which can be used for routing configuration
+In order to configure the email notifications, go to https://myaccount.google.com/apppasswords and then **Enter name** and get **an app password** which can be used for routing configuration
 ```
 cd alertmanager
 vi alertmanager.yml
@@ -266,8 +285,8 @@ route:
 receivers:
 - name: 'email-notifications'         # Receiver name
   email_configs:
-  - to: jaiswaladi246@gmail.com       # Email recipient
-    from: test@gmail.com              # Email sender
+  - to: jayasample1234@gmail.com       # Email recipient
+    from: monitor@example.com            # Email sender
     smarthost: smtp.gmail.com:587     # SMTP server
     auth_username: your_email         # SMTP auth username
     auth_identity: your_email         # SMTP auth identity
@@ -287,7 +306,7 @@ inhibit_rules:
 
 Now, ``Restart`` the alert manager and check
 
-Hurray, the monitoring setup complete!!!! 
+Hurray, the monitoring setup is complete!!!! 
 ![image](https://github.com/user-attachments/assets/527baa2d-8956-4014-a6a8-d6a998448108)
 
 To check the functionality let's try shutting down the game application.
@@ -296,7 +315,7 @@ To check the functionality let's try shutting down the game application.
 
 ![image](https://github.com/user-attachments/assets/8709fc3d-3a79-42f6-bab9-2a62fdeb20c5)
 
-Currently, the status is in pending state
+Currently, the status is in a pending state
 
 After `1 minute` the status will change to firing state and soon will receive an email notification
 ![image](https://github.com/user-attachments/assets/931cd4b7-3311-46a0-9616-658c1964d268)
@@ -304,64 +323,7 @@ After `1 minute` the status will change to firing state and soon will receive an
 At this point, we can see the notification on the Alert manager
 ![image](https://github.com/user-attachments/assets/c82f7b84-ebfd-4d43-947d-18f58098d4bb)
 
-
-# Prometheus and Alertmanager Configuration
-
-## Prometheus Configuration (`prometheus.yml`)
-
-### Global Configuration
-```yaml
-global:
-  scrape_interval: 15s                # Set the scrape interval to every 15 seconds. Default is every 1 minute.
-  evaluation_interval: 15s            # Evaluate rules every 15 seconds. The default is every 1 minute.
-  # scrape_timeout is set to the global default (10s).
-```
-
-### Alertmanager Configuration
-```yaml
-alerting:
-  alertmanagers:
-    - static_configs:
-        - targets:
-          - 'localhost:9093'          # Alertmanager endpoint
-```
-
-### Rule Files
-```yaml
-rule_files:
-   - "alert_rules.yml"                # Path to alert rules file
-  # - "second_rules.yml"              # Additional rule files can be added here
-```
-
-### Scrape Configuration
-#### Prometheus Itself
-```yaml
-scrape_configs:
-  - job_name: "prometheus"            # Job name for Prometheus
-
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
-
-    static_configs:
-      - targets: ["localhost:9090"]   # Target to scrape (Prometheus itself)
-```
-
-#### Node Exporter
-```yaml
-  - job_name: "node_exporter"         # Job name for node exporter
-
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
-
-    static_configs:
-      - targets: ["3.110.195.114:9100"]  # Target node exporter endpoint
-```
-
-
-
-
-
-
----
-
-This documentation provides a detailed explanation of your Prometheus and Alertmanager configuration files. It covers global settings, alert rules, email notifications, and inhibition rules.
+### Notes:
+- The `&` at the end of each command ensures the process runs in the background.
+- Need to ensure that you have configured the `prometheus.yml` and `alertmanager.yml` configuration files correctly before starting the services.
+- Adjust the firewall and security settings to allow the necessary ports (typically 9090 for Prometheus, 9093 for Alertmanager, 9115 for Blackbox Exporter, and 9100 for Node Exporter) to be accessible.
