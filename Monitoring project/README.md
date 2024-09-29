@@ -1,8 +1,8 @@
 # Ultimate DevOps Monitoring and Alerting Project: Ensuring Uptime and Reliability 
 
-YouTube Video URL of the project ->  [https://www.youtube.com/watch?v=JGQI5pkK82w](https://www.youtube.com/watch?v=0Ec_VeO60m8)
+<img width="900" alt="Screenshot 2024-09-29 at 9 38 09 PM" src="https://github.com/user-attachments/assets/628e0bc4-b167-4f49-8a7d-607cb7554d76">
 
-<img width="900" alt="Screenshot 2024-09-29 at 9 38 09 PM" src="https://github.com/user-attachments/assets/aea0bede-3372-48b7-bc6b-17799f1e8277">
+YouTube Video URL of the project ->  [https://www.youtube.com/watch?v=JGQI5pkK82w](https://www.youtube.com/watch?v=0Ec_VeO60m8)
 
 Here are the step-by-step details to set up an Ultimate DevOps Monitoring project using Prometheus and Alert Manager:
 
