@@ -80,7 +80,8 @@ sudo apt install openjdk-11-jre-headless
 sudo apt install maven -y
 mvn package 					// to build the project
 ```
-We can execute the jar file to run the application on browser
+We can execute the jar file to run the application on the browser
+
 ```
 cd target
 ls 		// can see .jar file
@@ -92,8 +93,9 @@ Now, we will access the game application at: http://3.135.20.106:8080/
 
 ![image](https://github.com/user-attachments/assets/f29bcf19-de7e-4176-8822-29ec58fbb3c4)
 
---- 
+
 Next, go to VM-2 to configure the Prometheus server by defining alert-rules for the different scenarios. and based on these rules we will get the alerts
+
 ```
 cd Prometheus
 ./Prometheus &
